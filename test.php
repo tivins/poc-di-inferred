@@ -1,9 +1,8 @@
 <?php
 
-use Tivins\DI\Container;
+namespace foo;
 
 require "vendor/autoload.php";
-
 
 class Registry {
 }
@@ -20,6 +19,12 @@ class Application {
     }
 }
 
-$container = new Container();
+namespace bar;
+
+use Tivins\DI\ClassAnalyzer;
+use Tivins\DI\Container;
+use foo\Application;
+
+$container = new Container(new ClassAnalyzer(__dir__ . '/.di/cache'));
 $application = $container->get(Application::class);
 $application->doSomething();

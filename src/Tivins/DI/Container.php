@@ -5,7 +5,6 @@ namespace Tivins\DI;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionParameter;
 
 class Container
 {
@@ -14,6 +13,9 @@ class Container
      */
     private array $container = [];
 
+    public function __construct(private readonly ClassAnalyzer $analyzer)
+    {
+    }
 
     /**
      * @template T of object
@@ -38,46 +40,26 @@ class Container
      */
     private function instantiate(string $class): object
     {
-        $reflectionClass = new ReflectionClass($class);
+        $analysis = $this->analyzer->getConstructorAnalysis($class);
 
-        $constructor = $reflectionClass->getConstructor();
-        if ($constructor === null) {
+        if (!$analysis['hasConstructor']) {
             return new $class();
         }
-        if (!$reflectionClass->isInstantiable()) {
+        if (!$analysis['isInstantiable']) {
             throw new Exception("Class is not instantiable: " . $class);
         }
-        if ($constructor->isPrivate()) {
+        if ($analysis['constructorPrivate']) {
             throw new Exception("Constructor is private: " . $class);
         }
-        return $reflectionClass->newInstance(
-            ...$this->resolveDependencies($constructor->getParameters())
-        );
-    }
 
-    /**
-     * @throws Exception
-     */
-    private function resolveDependencies(array $parameters): array
-    {
         $dependencies = [];
-        foreach ($parameters as $parameter) {
-            $dependencies[] = $this->resolveDependency($parameter);
+        foreach ($analysis['parameters'] as $param) {
+            if ($param['type'] === '') {
+                throw new Exception("Parameter is not typed: " . $param['name']);
+            }
+            $dependencies[] = $this->get($param['type']);
         }
-        return $dependencies;
-    }
 
-    /**
-     * @throws Exception
-     */
-    private function resolveDependency(ReflectionParameter $parameter): object
-    {
-        if ($parameter->getType() === null) {
-            throw new Exception("Parameter is not typed: " . $parameter->getName());
-        }
-        if ($parameter->getType()->isBuiltin()) {
-            throw new Exception("Parameter is builtin: " . $parameter->getName());
-        }
-        return $this->get($parameter->getType()->getName());
+        return new $class(...$dependencies);
     }
 }
