@@ -8,11 +8,13 @@ use ReflectionException;
 class Container
 {
     /**
+     * Store singleton instances
      * @var array<string, object>
      */
     private array $container = [];
 
     /**
+     * Store bindings (interface -> implementation)
      * @var array<string, class-string>
      */
     private array $bindings = [];
@@ -51,6 +53,13 @@ class Container
         return $instance;
     }
 
+    /**
+     * Remove a class from the container. 
+     * 
+     * **Important**: Because of the cache and the size of this library, this method will purge all the cache.
+     * 
+     * @param class-string $class
+     */
     public function remove(string $class): void
     {
         $this->container = [];
