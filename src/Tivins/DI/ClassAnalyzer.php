@@ -7,17 +7,14 @@ use ReflectionException;
 
 class ClassAnalyzer
 {
-    private string $cacheDir;
+    private CacheInterface $cache;
 
     /**
-     * @param string $cacheDir Directory for cache files (created if missing)
+     * @param CacheInterface $cache
      */
-    public function __construct(string $cacheDir = '')
+    public function __construct(CacheInterface $cache)
     {
-        $this->cacheDir = $cacheDir !== '' ? $cacheDir : (sys_get_temp_dir() . '/di-cache');
-        if (!is_dir($this->cacheDir)) {
-            mkdir($this->cacheDir, 0755, true);
-        }
+        $this->cache = $cache;
     }
 
     /**
@@ -44,9 +41,9 @@ class ClassAnalyzer
         $sourceFile = $reflection->getFileName();
         $sourceMtime = ($sourceFile !== false && is_file($sourceFile)) ? (int)filemtime($sourceFile) : 0;
 
-        $cachePath = $this->getCachePath($class);
+        $cacheKey = $class;
         if ($sourceFile !== false && $sourceMtime > 0) {
-            $cached = $this->readCache($cachePath);
+            $cached = $this->readCache($cacheKey);
             if ($cached !== null
                 && isset($cached['sourceFile'], $cached['sourceMtime'])
                 && $cached['sourceFile'] === $sourceFile
@@ -63,7 +60,7 @@ class ClassAnalyzer
 
         $analysis = $this->analyze($reflection);
         if ($sourceFile !== false && $sourceMtime > 0) {
-            $this->writeCache($cachePath, $sourceFile, $sourceMtime, $analysis);
+            $this->writeCache($cacheKey, $sourceFile, $sourceMtime, $analysis);
         }
         return $analysis;
     }
@@ -97,25 +94,13 @@ class ClassAnalyzer
         ];
     }
 
-    private function getCachePath(string $class): string
-    {
-        if (!is_dir($this->cacheDir)) {
-            @mkdir($this->cacheDir, 0755, true);
-        }
-        $safe = str_replace(['\\', ':'], ['-', '-'], $class);
-        return $this->cacheDir . '/' . $safe . '.json';
-    }
-
     /**
      * @return array<string, mixed>|null
      */
-    private function readCache(string $cachePath): ?array
+    private function readCache(string $cacheKey): ?array
     {
-        if (!is_file($cachePath)) {
-            return null;
-        }
-        $raw = @file_get_contents($cachePath);
-        if ($raw === false) {
+        $raw = $this->cache->get($cacheKey);
+        if ($raw === null) {
             return null;
         }
         $data = json_decode($raw, true);
@@ -125,7 +110,7 @@ class ClassAnalyzer
     /**
      * @param array{hasConstructor: bool, isInstantiable: bool, constructorPrivate: bool, parameters: list<array{name: string, type: string}>} $analysis
      */
-    private function writeCache(string $cachePath, string $sourceFile, int $sourceMtime, array $analysis): void
+    private function writeCache(string $cacheKey, string $sourceFile, int $sourceMtime, array $analysis): void
     {
         $data = [
             'sourceFile' => $sourceFile,
@@ -135,6 +120,6 @@ class ClassAnalyzer
             'constructorPrivate' => $analysis['constructorPrivate'],
             'parameters' => $analysis['parameters'],
         ];
-        @file_put_contents($cachePath, json_encode($data, JSON_UNESCAPED_SLASHES));
+        $this->cache->set($cacheKey, json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 }

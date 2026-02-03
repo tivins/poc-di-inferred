@@ -7,14 +7,17 @@ namespace foo;
 require "vendor/autoload.php";
 
 interface RegistryInterface {
+    # write some methods to implement.
 }
 
 class Registry implements RegistryInterface {
+    # write RegistryInterface implementation
 }
 
 readonly class Application {
     public function __construct(
-        private RegistryInterface $registry
+        private RegistryInterface $registry,
+        # and more class/interfaces
     )
     {
     }
@@ -31,12 +34,13 @@ namespace bar;
 use foo\Registry;
 use foo\RegistryInterface;
 use Throwable;
+use Tivins\DI\CacheFile;
 use Tivins\DI\ClassAnalyzer;
 use Tivins\DI\Container;
 use foo\Application;
 
 // bootstrap of DI container
-$container = new Container(new ClassAnalyzer(__dir__ . '/.di/cache'));
+$container = new Container(new ClassAnalyzer(new CacheFile(__dir__ . '/.di/cache')));
 $container->bind(RegistryInterface::class, Registry::class);
 
 // Usage
