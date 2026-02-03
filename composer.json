@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Tivins\\": "src/Tivins/"
+      "Tivins\\": "src/"
     }
   }
 }

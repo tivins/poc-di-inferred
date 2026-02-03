@@ -57,15 +57,16 @@ use Tivins\DI\Container;
     // Usage
     $application = $container->get(Application::class);
     var_dump($application->doSomething("Test !")); # OK (maybe with cache write)
-    echo json_encode($container->getDump(), JSON_PRETTY_PRINT) . PHP_EOL;
+    echo json_encode($container->getDump()) . PHP_EOL;
 
     $application = $container->get(Application::class);
-    print_r($application->doSomething("Test !")); # OK (with cache for sure !)
+    var_dump($application->doSomething("Test !")); # OK (with cache for sure !)
+    echo json_encode($container->getDump()) . PHP_EOL;
 
     try {
         $container->remove(RegistryInterface::class);
         $container->get(Application::class); # Throws Exception because RegistryInterface is not instantiable.
-    } catch (Throwable $e) {
+    } catch (Throwable) {
         echo "Unbounded registry interface!\n";
     }
 })();
