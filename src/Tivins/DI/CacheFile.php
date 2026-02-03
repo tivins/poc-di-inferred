@@ -16,7 +16,7 @@ class CacheFile implements CacheInterface
 
     public function get(string $key): ?string
     {
-        $filename = $this->cacheDir . '/' . $this->safeKey($key);
+        $filename = $this->getFilename($key);
         if (!is_readable($filename)) {
             return null;
         }
@@ -24,13 +24,40 @@ class CacheFile implements CacheInterface
         return $content === false ? null : $content;
     }
 
-    public function set(string $key, string $value): void
+    public function set(string $key, string $value): bool
     {
-        file_put_contents($this->cacheDir . '/' . $this->safeKey($key), $value);
+        $filename = $this->getFilename($key);
+        if (is_writable($filename)) {
+            return file_put_contents($filename, $value) !== false;
+        }
+        return false;
+    }
+
+    public function delete(string $key): void
+    {
+        $filename = $this->cacheDir . '/' . $this->safeKey($key);
+        if (!is_writable($filename)) {
+            return;
+        }
+        unlink($filename);
+    }
+
+    public function clear(): void
+    {
+        $files = glob($this->cacheDir . '/*');
+        foreach ($files as $file) {
+            if (is_file($file) && is_writable($file)) {
+                unlink($file);
+            }
+        }
     }
 
     private function safeKey(string $key): string
     {
         return sha1($key);
+    }
+    private function getFilename(string $key): string
+    {
+        return $this->cacheDir . '/' . $this->safeKey($key);
     }
 }

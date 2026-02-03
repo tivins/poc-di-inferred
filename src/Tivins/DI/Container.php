@@ -30,7 +30,6 @@ class Container
     {
         $this->bindings[$interface] = $implementation;
     }
-
     /**
      * Get an instance of a class
      * @template T of object
@@ -39,18 +38,24 @@ class Container
      * @throws ReflectionException
      * @throws Exception
      */
-    public function get(string $class): object
+    public function get(string $class)
     {
         if (isset($this->bindings[$class])) {
             $class = $this->bindings[$class];
         }
-        
         if (isset($this->container[$class])) {
             return $this->container[$class];
         }
         $instance = $this->instantiate($class);
         $this->container[$class] = $instance;
         return $instance;
+    }
+
+    public function remove(string $class): void
+    {
+        $this->container = [];
+        $this->bindings = [];
+        $this->analyzer->purgeCache();
     }
 
     /**

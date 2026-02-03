@@ -122,4 +122,14 @@ class ClassAnalyzer
         ];
         $this->cache->set($cacheKey, json_encode($data, JSON_UNESCAPED_SLASHES));
     }
+
+    public function deleteCache(string $cacheKey): void
+    {
+        $this->cache->delete($cacheKey);
+    }
+
+    public function purgeCache(): void
+    {
+        $this->cache->clear();
+    }
 }
