@@ -19,6 +19,11 @@ class Container
      */
     private array $bindings = [];
 
+
+    /**
+     * Create a new container used to inject dependencies.
+     * @param ClassAnalyzer $analyzer Used to analyze classes and their dependencies and cache the results.
+     */
     public function __construct(private readonly ClassAnalyzer $analyzer)
     {
     }
