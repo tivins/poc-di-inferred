@@ -53,23 +53,20 @@ use Tivins\DI\Container;
     $container = new Container(new ClassAnalyzer(new CacheFile(__dir__ . '/.di/cache')));
     $container->bind(RegistryInterface::class, Registry::class);
 
+
     // Usage
+    $application = $container->get(Application::class);
+    var_dump($application->doSomething("Test !")); # OK (maybe with cache write)
+    echo json_encode($container->getDump(), JSON_PRETTY_PRINT) . PHP_EOL;
+
+    $application = $container->get(Application::class);
+    print_r($application->doSomething("Test !")); # OK (with cache for sure !)
+
     try {
-        $application = $container->get(Application::class);
-        var_dump($application->doSomething("Test !")); # OK (maybe with cache write)
-
-        $application = $container->get(Application::class);
-        var_dump($application->doSomething("Test !")); # OK (with cache for sure !)
-
-        try {
-            $container->remove(RegistryInterface::class);
-            $container->get(Application::class); # Throws Exception because RegistryInterface is not instantiable.
-        } catch (Throwable $e) {
-            echo "Unbounded registry interface!\n";
-        }
+        $container->remove(RegistryInterface::class);
+        $container->get(Application::class); # Throws Exception because RegistryInterface is not instantiable.
     } catch (Throwable $e) {
-        echo "Something went wrong!\n";
-        var_dump($e->getMessage());
+        echo "Unbounded registry interface!\n";
     }
 })();
 
@@ -87,5 +84,7 @@ use Tivins\DI\Container;
     $container = new Container(new ClassAnalyzer(new MemoryCache()));
     $container->bind(RegistryInterface::class, Registry::class);
     $application = $container->get(Application::class); # OK (-> cache write in memory)
-    var_dump($application->doSomething("Test !"));
+    var_dump($application->doSomething("Test from Memory"));
+    $application = $container->get(Application::class); # OK (-> cache from memory)
+    var_dump($application->doSomething("Test from Memory"));
 })();

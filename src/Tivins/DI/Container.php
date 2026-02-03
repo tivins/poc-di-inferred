@@ -32,6 +32,7 @@ class Container
     {
         $this->bindings[$interface] = $implementation;
     }
+
     /**
      * Get an instance of a class
      * @template T of object
@@ -40,7 +41,7 @@ class Container
      * @throws ReflectionException
      * @throws Exception
      */
-    public function get(string $class)
+    public function get(string $class): object
     {
         if (isset($this->bindings[$class])) {
             $class = $this->bindings[$class];
@@ -54,10 +55,10 @@ class Container
     }
 
     /**
-     * Remove a class from the container. 
-     * 
+     * Remove a class from the container.
+     *
      * **Important**: Because of the cache and the size of this library, this method will purge all the cache.
-     * 
+     *
      * @param class-string $class
      */
     public function remove(string $class): void
@@ -97,5 +98,21 @@ class Container
         }
 
         return new $class(...$dependencies);
+    }
+
+    /**
+     * Get a dump of the container and the bindings (with object id).
+     * @return array{container: array<string, string>, bindings: array<string, string>}
+     */
+    public function getDump(): array
+    {
+        $data = [];
+        foreach ($this->container as $key => $value) {
+            $data['container'][$key] = get_class($value) . '#' .  spl_object_id($value);
+        }
+        foreach ($this->bindings as $key => $value) {
+            $data['bindings'][$key] = $value;
+        }
+        return $data;
     }
 }
