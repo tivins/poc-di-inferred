@@ -2,6 +2,7 @@
   "name": "tivins/dependency-injection",
   "description": "description",
   "minimum-stability": "dev",
+  "version":  "0.1.0",
   "license": "MIT",
   "authors": [
     {

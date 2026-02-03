@@ -14,7 +14,7 @@ class ClassAnalyzer
      */
     public function __construct(string $cacheDir = '')
     {
-        $this->cacheDir = $cacheDir !== '' ? $cacheDir : (sys_get_temp_dir() . '/tivins-di-cache');
+        $this->cacheDir = $cacheDir !== '' ? $cacheDir : (sys_get_temp_dir() . '/di-cache');
         if (!is_dir($this->cacheDir)) {
             mkdir($this->cacheDir, 0755, true);
         }

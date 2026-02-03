@@ -3,7 +3,6 @@
 namespace Tivins\DI;
 
 use Exception;
-use ReflectionClass;
 use ReflectionException;
 
 class Container
@@ -13,11 +12,27 @@ class Container
      */
     private array $container = [];
 
+    /**
+     * @var array<string, class-string>
+     */
+    private array $bindings = [];
+
     public function __construct(private readonly ClassAnalyzer $analyzer)
     {
     }
 
     /**
+     * Bind a class to an implementation
+     * @param class-string $interface
+     * @param class-string $implementation
+     */
+    public function bind(string $interface, string $implementation): void
+    {
+        $this->bindings[$interface] = $implementation;
+    }
+
+    /**
+     * Get an instance of a class
      * @template T of object
      * @param class-string<T> $class
      * @return T
@@ -26,6 +41,10 @@ class Container
      */
     public function get(string $class): object
     {
+        if (isset($this->bindings[$class])) {
+            $class = $this->bindings[$class];
+        }
+        
         if (isset($this->container[$class])) {
             return $this->container[$class];
         }
@@ -35,6 +54,9 @@ class Container
     }
 
     /**
+     * Instantiate a class
+     * @param class-string $class
+     * @return object
      * @throws ReflectionException
      * @throws Exception
      */
