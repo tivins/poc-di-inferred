@@ -2,6 +2,8 @@
 
 namespace Tivins\DI;
 
+use Tivins\DI\Core\CacheInterface;
+
 class CacheFile implements CacheInterface
 {
     private string $cacheDir;
