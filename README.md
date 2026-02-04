@@ -2,6 +2,7 @@
 
 PoC for **automatic dependency injection** in PHP: the container instantiates a class by recursively resolving constructor parameter types (reflection) and respecting interface → implementation bindings.
 
+
 ## How it works
 
 - **Container**: `get($class)` creates the instance (singleton), resolves constructor parameters via **ClassAnalyzer**, and uses **bindings** for interfaces.
@@ -10,8 +11,7 @@ PoC for **automatic dependency injection** in PHP: the container instantiates a 
 
 ## Requirements
 
-- PHP 8.3+
-- Composer
+PHP 8.3+, Composer
 
 ## Installation
 
@@ -21,18 +21,7 @@ composer install
 
 ## Usage
 
-```php
-use Tivins\DI\Core\Container;
-use Tivins\DI\Core\ClassAnalyzer;
-use Tivins\DI\Infrastructure\CacheFile; // or CacheMemory
-
-$container = new Container(new ClassAnalyzer(new CacheFile(__DIR__ . '/.di/cache')));
-$container->bind(RegistryInterface::class, Registry::class);
-
-$app = $container->get(Application::class); // Application receives RegistryInterface (Registry) automatically
-```
-
-Full example and scenarios (cache, singleton, `remove`): see `example.php`.
+Full example and scenarios see `example.php`.
 
 ## Structure
 
@@ -49,6 +38,8 @@ src/DI/
 ```
 
 ## Tests
+
+[![Tests](https://github.com/tivins/poc-di-inferred/actions/workflows/tests.yml/badge.svg)](https://github.com/tivins/poc-di-inferred/actions/workflows/tests.yml)
 
 ```bash
 composer test
