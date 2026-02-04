@@ -21,7 +21,7 @@ composer install
 
 ## Usage
 
-Full example and scenarios see [`example.php`](blob/main/example.php).
+Full example and scenarios see [`example.php`](example.php).
 
 ## Structure
 
