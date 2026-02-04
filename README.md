@@ -9,6 +9,13 @@ PoC for **automatic dependency injection** in PHP: the container instantiates a 
 - **ClassAnalyzer**: analyzes the constructor (typed parameters) and caches the result (invalidation by source file modification time).
 - **Cache**: `CacheInterface` with implementations `CacheFile`, `CacheMemory`, `CacheRedis` (optional cache for analyses).
 
+### Limitations
+
+- `Container::remove(string $class)` clears the entire cache. Per-entry invalidation would require more advanced logic and is out of scope for this PoC.
+- Scalar / built-in parameters are not supported in constructor injection (same reasons; out of scope for this PoC).
+- Redis cache is not implemented. `CacheRedis` is a stub/example class to illustrate how other cache backends could be added.
+
+
 ## Requirements
 
 PHP 8.3+, Composer

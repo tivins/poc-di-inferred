@@ -39,7 +39,9 @@ class CacheFile implements CacheInterface
     public function delete(string $key): void
     {
         $filename = $this->cacheDir . '/' . $this->safeKey($key);
-        unlink($filename);
+        if (is_file($filename) && is_writable($filename)) {
+            unlink($filename);
+        }
     }
 
     public function clear(): void
