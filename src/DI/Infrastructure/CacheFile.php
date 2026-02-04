@@ -1,6 +1,6 @@
 <?php
 
-namespace Tivins\DI;
+namespace Tivins\DI\Infrastructure;
 
 use Tivins\DI\Core\CacheInterface;
 

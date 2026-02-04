@@ -1,6 +1,6 @@
 <?php
 
-namespace Tivins\DI;
+namespace Tivins\DI\Core;
 
 use Exception;
 use ReflectionException;
@@ -65,6 +65,7 @@ class Container
      * **Important**: Because of the cache and the size of this library, this method will purge all the cache.
      *
      * @param class-string $class
+     * @noinspection PhpUnusedParameterInspection
      */
     public function remove(string $class): void
     {

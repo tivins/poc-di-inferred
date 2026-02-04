@@ -38,21 +38,20 @@ readonly class Application
 
 namespace bar;
 
+use Throwable;
 use foo\Application;
 use foo\Registry;
 use foo\RegistryInterface;
-use Throwable;
-use Tivins\DI\CacheFile;
-use Tivins\DI\CacheInterface;
-use Tivins\DI\ClassAnalyzer;
-use Tivins\DI\Container;
+use Tivins\DI\Core\ClassAnalyzer;
+use Tivins\DI\Core\Container;
+use Tivins\DI\Infrastructure\CacheFile;
+use Tivins\DI\Infrastructure\MemoryCache;
 
 # Example 1
 (function () {
     // bootstrap of DI container
     $container = new Container(new ClassAnalyzer(new CacheFile(__dir__ . '/.di/cache')));
     $container->bind(RegistryInterface::class, Registry::class);
-
 
     // Usage
     $application = $container->get(Application::class);
@@ -64,8 +63,9 @@ use Tivins\DI\Container;
     echo json_encode($container->getDump()) . PHP_EOL;
 
     try {
+        # try to remove RegistryInterface from the registry
         $container->remove(RegistryInterface::class);
-        $container->get(Application::class); # Throws Exception because RegistryInterface is not instantiable.
+        $container->get(Application::class); # Throws Exception because RegistryInterface is not instantiable (no more binding).
     } catch (Throwable) {
         echo "Unbounded registry interface!\n";
     }
@@ -74,13 +74,7 @@ use Tivins\DI\Container;
 # Exemple 2 : Customize
 (function () {
 
-    class MemoryCache implements CacheInterface {
-        private array $memory = [];
-        public function get(string $key): ?string{ return $this->memory[$key] ?? null; }
-        public function set(string $key, string $value): bool { $this->memory[$key] = $value; return true; }
-        public function delete(string $key): void { unset($this->memory[$key]); }
-        public function clear(): void { $this->memory = []; }
-    }
+
 
     $container = new Container(new ClassAnalyzer(new MemoryCache()));
     $container->bind(RegistryInterface::class, Registry::class);
