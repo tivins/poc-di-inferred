@@ -48,6 +48,13 @@ src/DI/
     └── CacheRedis.php
 ```
 
+## Tests
+
+```bash
+composer test
+composer test:coverage
+```
+
 ## License
 
 MIT
