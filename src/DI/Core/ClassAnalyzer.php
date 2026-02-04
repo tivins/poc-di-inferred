@@ -2,6 +2,7 @@
 
 namespace Tivins\DI\Core;
 
+use Exception;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
@@ -67,6 +68,7 @@ class ClassAnalyzer
     }
 
     /**
+     * @param ReflectionClass<object> $reflection
      * @return array{hasConstructor: bool, isInstantiable: bool, constructorPrivate: bool, parameters: list<array{name: string, type: string}>}
      */
     private function analyze(ReflectionClass $reflection): array
@@ -113,6 +115,7 @@ class ClassAnalyzer
 
     /**
      * @param array{hasConstructor: bool, isInstantiable: bool, constructorPrivate: bool, parameters: list<array{name: string, type: string}>} $analysis
+     * @throws Exception
      */
     private function writeCache(string $cacheKey, string $sourceFile, int $sourceMtime, array $analysis): void
     {
@@ -124,7 +127,11 @@ class ClassAnalyzer
             'constructorPrivate' => $analysis['constructorPrivate'],
             'parameters' => $analysis['parameters'],
         ];
-        $this->cache->set($cacheKey, json_encode($data, JSON_UNESCAPED_SLASHES));
+        $cacheData = json_encode($data, JSON_UNESCAPED_SLASHES);
+        if ($cacheData === false) {
+            throw new Exception("Unable to encode data for $sourceFile");
+        }
+        $this->cache->set($cacheKey, $cacheData);
     }
 
     public function deleteCache(string $cacheKey): void

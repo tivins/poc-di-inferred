@@ -21,7 +21,7 @@ composer install
 
 ## Usage
 
-Full example and scenarios see `example.php`.
+Full example and scenarios see [`example.php`](blob/main/example.php).
 
 ## Structure
 
@@ -48,8 +48,11 @@ composer test:coverage
 
 ## Code quality
 
+PHPStan level 7
 ```bash
-vendor/bin/phpstan analyse -l 6 src
+composer phpstan
+# or manually
+vendor/bin/phpstan analyse -l 7 src
 ```
 
 ## License

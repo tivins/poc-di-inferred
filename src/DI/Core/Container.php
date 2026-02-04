@@ -52,10 +52,14 @@ class Container
             $class = $this->bindings[$class];
         }
         if (isset($this->container[$class])) {
-            return $this->container[$class];
+            /** @var T $cached */
+            $cached = $this->container[$class];
+            return $cached;
         }
+
         $instance = $this->instantiate($class);
         $this->container[$class] = $instance;
+        /** @var T $instance */
         return $instance;
     }
 
@@ -100,7 +104,9 @@ class Container
             if ($param['type'] === '') {
                 throw new Exception("Parameter is not typed: " . $param['name']);
             }
-            $dependencies[] = $this->get($param['type']);
+            /** @var class-string $dependencyClass */
+            $dependencyClass = $param['type'];
+            $dependencies[] = $this->get($dependencyClass);
         }
 
         return new $class(...$dependencies);
@@ -112,9 +118,12 @@ class Container
      */
     public function getDump(): array
     {
-        $data = [];
+        $data = [
+            'container' => [],
+            'bindings' => [],
+        ];
         foreach ($this->container as $key => $value) {
-            $data['container'][$key] = get_class($value) . '#' .  spl_object_id($value);
+            $data['container'][$key] = get_class($value) . '#' . spl_object_id($value);
         }
         foreach ($this->bindings as $key => $value) {
             $data['bindings'][$key] = $value;

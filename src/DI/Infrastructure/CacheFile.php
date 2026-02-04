@@ -45,6 +45,9 @@ class CacheFile implements CacheInterface
     public function clear(): void
     {
         $files = glob($this->cacheDir . '/*');
+        if ($files === false) {
+            return;
+        }
         foreach ($files as $file) {
             if (is_file($file) && is_writable($file)) {
                 unlink($file);
