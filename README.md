@@ -1,14 +1,14 @@
 # dependency-injection
 
-PoC d’**injection de dépendances automatique** en PHP : le conteneur instancie une classe en résolvant récursivement les types du constructeur (reflection) et en respectant les bindings interface → implémentation.
+PoC for **automatic dependency injection** in PHP: the container instantiates a class by recursively resolving constructor parameter types (reflection) and respecting interface → implementation bindings.
 
-## Fonctionnement
+## How it works
 
-- **Container** : `get($class)` crée l’instance (singleton), résout les paramètres du constructeur via le **ClassAnalyzer**, et utilise les **bindings** pour les interfaces.
-- **ClassAnalyzer** : analyse le constructeur (paramètres typés) et met en cache le résultat (invalidation par date de modification du fichier source).
-- **Cache** : interface `CacheInterface` avec implémentations `CacheFile`, `CacheMemory`, `CacheRedis` (cache optionnel pour les analyses).
+- **Container**: `get($class)` creates the instance (singleton), resolves constructor parameters via **ClassAnalyzer**, and uses **bindings** for interfaces.
+- **ClassAnalyzer**: analyzes the constructor (typed parameters) and caches the result (invalidation by source file modification time).
+- **Cache**: `CacheInterface` with implementations `CacheFile`, `CacheMemory`, `CacheRedis` (optional cache for analyses).
 
-## Prérequis
+## Requirements
 
 - PHP 8.3+
 - Composer
@@ -19,20 +19,20 @@ PoC d’**injection de dépendances automatique** en PHP : le conteneur instanc
 composer install
 ```
 
-## Utilisation
+## Usage
 
 ```php
 use Tivins\DI\Core\Container;
 use Tivins\DI\Core\ClassAnalyzer;
-use Tivins\DI\Infrastructure\CacheFile; // ou CacheMemory
+use Tivins\DI\Infrastructure\CacheFile; // or CacheMemory
 
 $container = new Container(new ClassAnalyzer(new CacheFile(__DIR__ . '/.di/cache')));
 $container->bind(RegistryInterface::class, Registry::class);
 
-$app = $container->get(Application::class); // Application reçoit RegistryInterface (Registry) automatiquement
+$app = $container->get(Application::class); // Application receives RegistryInterface (Registry) automatically
 ```
 
-Exemple complet et scénarios (cache, singleton, `remove`) : voir `test.php`.
+Full example and scenarios (cache, singleton, `remove`): see `example.php`.
 
 ## Structure
 
@@ -48,6 +48,6 @@ src/DI/
     └── CacheRedis.php
 ```
 
-## Licence
+## License
 
 MIT
