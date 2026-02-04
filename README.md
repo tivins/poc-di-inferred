@@ -48,11 +48,11 @@ composer test:coverage
 
 ## Code quality
 
-PHPStan level 7
+PHPStan level 10
 ```bash
 composer phpstan
 # or manually
-vendor/bin/phpstan analyse -l 7 src
+vendor/bin/phpstan analyse -l 10 src
 ```
 
 ## License

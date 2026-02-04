@@ -36,6 +36,7 @@ class ClassAnalyzer
      * @param class-string $class
      * @return array{hasConstructor: bool, isInstantiable: bool, constructorPrivate: bool, parameters: list<array{name: string, type: string}>}
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getConstructorAnalysis(string $class): array
     {
@@ -51,11 +52,13 @@ class ClassAnalyzer
                 && $cached['sourceFile'] === $sourceFile
                 && $cached['sourceMtime'] === $sourceMtime
             ) {
+                /** @var list<array{name: string, type: string}> $cachedParameters */
+                $cachedParameters = $cached['parameters'];
                 return [
-                    'hasConstructor' => $cached['hasConstructor'],
-                    'isInstantiable' => $cached['isInstantiable'],
-                    'constructorPrivate' => $cached['constructorPrivate'],
-                    'parameters' => $cached['parameters'],
+                    'hasConstructor' => (bool)$cached['hasConstructor'],
+                    'isInstantiable' => (bool)$cached['isInstantiable'],
+                    'constructorPrivate' => (bool)$cached['constructorPrivate'],
+                    'parameters' => $cachedParameters,
                 ];
             }
         }
@@ -110,7 +113,11 @@ class ClassAnalyzer
             return null;
         }
         $data = json_decode($raw, true);
-        return is_array($data) ? $data : null;
+        if (!is_array($data)) {
+            return null;
+        }
+        /** @var array<string, mixed> $data */
+        return $data;
     }
 
     /**

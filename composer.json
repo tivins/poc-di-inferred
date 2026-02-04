@@ -27,6 +27,6 @@
   "scripts": {
     "test": "phpunit",
     "test:coverage": "phpunit --coverage-text",
-    "phpstan": "phpstan analyse -l 7 src"
+    "phpstan": "phpstan analyse -l 10 src"
   }
 }
