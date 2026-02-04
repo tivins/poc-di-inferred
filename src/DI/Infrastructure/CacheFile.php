@@ -29,18 +29,16 @@ class CacheFile implements CacheInterface
     public function set(string $key, string $value): bool
     {
         $filename = $this->getFilename($key);
-        if (is_writable($filename)) {
-            return file_put_contents($filename, $value) !== false;
+        $dir = $this->cacheDir;
+        if (!is_dir($dir) || !is_writable($dir)) {
+            return false;
         }
-        return false;
+        return file_put_contents($filename, $value) !== false;
     }
 
     public function delete(string $key): void
     {
         $filename = $this->cacheDir . '/' . $this->safeKey($key);
-        if (!is_writable($filename)) {
-            return;
-        }
         unlink($filename);
     }
 

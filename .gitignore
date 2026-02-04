@@ -8,3 +8,5 @@ vendor/
 #cache
 .di/
 
+.phpunit.cache/
+coverage/
