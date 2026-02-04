@@ -4,8 +4,6 @@
 
 namespace foo;
 
-require "vendor/autoload.php";
-
 interface RegistryInterface
 {
     public function get(string $key): string;
@@ -37,6 +35,8 @@ readonly class Application
 # ------------------------------------- namespace bar -------------------------------------
 
 namespace bar;
+
+require "vendor/autoload.php";
 
 use Throwable;
 use foo\Application;
@@ -74,12 +74,12 @@ use Tivins\DI\Infrastructure\CacheMemory;
 # Exemple 2 : Customize
 (function () {
 
-
-
     $container = new Container(new ClassAnalyzer(new CacheMemory()));
     $container->bind(RegistryInterface::class, Registry::class);
+    
     $application = $container->get(Application::class); # OK (-> cache write in memory)
     var_dump($application->doSomething("Test from Memory"));
+
     $application = $container->get(Application::class); # OK (-> cache from memory)
     var_dump($application->doSomething("Test from Memory"));
 })();

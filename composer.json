@@ -5,9 +5,7 @@
   "version":  "0.1.0",
   "license": "MIT",
   "authors": [
-    {
-      "name": "Tivins"
-    }
+    {"name": "Tivins"}
   ],
   "require": {
     "php": "^8.3"
