@@ -18,6 +18,7 @@ class CacheFileTest extends TestCase
     protected function tearDown(): void
     {
         if (is_dir($this->tempDir)) {
+            @chmod($this->tempDir, 0755);
             (new CacheFile($this->tempDir))->clear();
             @rmdir($this->tempDir);
         }
@@ -65,5 +66,16 @@ class CacheFileTest extends TestCase
         new CacheFile($dir);
 
         $this->assertDirectoryExists($dir);
+    }
+
+    public function testSetReturnsFalseWhenCacheDirNotWritable(): void
+    {
+        mkdir($this->tempDir, 0755, true);
+        @chmod($this->tempDir, 0555);
+
+        $cache = new CacheFile($this->tempDir);
+        $result = $cache->set('key', 'value');
+
+        $this->assertFalse($result);
     }
 }

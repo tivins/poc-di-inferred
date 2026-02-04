@@ -85,6 +85,18 @@ class ClassAnalyzerTest extends TestCase
         $this->assertNull($cache->get(Logger::class));
     }
 
+    public function testDeleteCache(): void
+    {
+        $cache = new CacheMemory();
+        $analyzer = new ClassAnalyzer($cache);
+
+        $analyzer->getConstructorAnalysis(Logger::class);
+        $this->assertNotNull($cache->get(Logger::class));
+
+        $analyzer->deleteCache(Logger::class);
+        $this->assertNull($cache->get(Logger::class));
+    }
+
     public function testClassWithUntypedParam(): void
     {
         $analyzer = $this->createAnalyzer();
