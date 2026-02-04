@@ -46,6 +46,12 @@ composer test
 composer test:coverage
 ```
 
+## Code quality
+
+```bash
+vendor/bin/phpstan analyse -l 6 src
+```
+
 ## License
 
 MIT

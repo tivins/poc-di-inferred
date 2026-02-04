@@ -4,6 +4,7 @@ namespace Tivins\DI\Core;
 
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
 
 class ClassAnalyzer
 {
@@ -78,7 +79,10 @@ class ClassAnalyzer
         if ($constructor !== null) {
             foreach ($constructor->getParameters() as $param) {
                 $type = $param->getType();
-                $typeName = ($type !== null && !$type->isBuiltin()) ? $type->getName() : '';
+                $typeName = '';
+                if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+                    $typeName = $type->getName();
+                }
                 $parameters[] = [
                     'name' => $param->getName(),
                     'type' => $typeName,

@@ -6,6 +6,9 @@ use Tivins\DI\Core\CacheInterface;
 
 class CacheMemory implements CacheInterface
 {
+    /**
+     * @var array<string, string>
+     */
     private array $memory = [];
 
     public function get(string $key): ?string
