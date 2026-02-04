@@ -2,7 +2,6 @@
 
 namespace Tivins\DI\Core;
 
-use;
 use ReflectionClass;
 use ReflectionException;
 

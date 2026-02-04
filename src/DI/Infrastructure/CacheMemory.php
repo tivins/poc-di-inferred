@@ -4,7 +4,7 @@ namespace Tivins\DI\Infrastructure;
 
 use Tivins\DI\Core\CacheInterface;
 
-class MemoryCache implements CacheInterface
+class CacheMemory implements CacheInterface
 {
     private array $memory = [];
 

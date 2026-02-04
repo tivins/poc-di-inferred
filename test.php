@@ -45,7 +45,7 @@ use foo\RegistryInterface;
 use Tivins\DI\Core\ClassAnalyzer;
 use Tivins\DI\Core\Container;
 use Tivins\DI\Infrastructure\CacheFile;
-use Tivins\DI\Infrastructure\MemoryCache;
+use Tivins\DI\Infrastructure\CacheMemory;
 
 # Example 1
 (function () {
@@ -76,7 +76,7 @@ use Tivins\DI\Infrastructure\MemoryCache;
 
 
 
-    $container = new Container(new ClassAnalyzer(new MemoryCache()));
+    $container = new Container(new ClassAnalyzer(new CacheMemory()));
     $container->bind(RegistryInterface::class, Registry::class);
     $application = $container->get(Application::class); # OK (-> cache write in memory)
     var_dump($application->doSomething("Test from Memory"));
